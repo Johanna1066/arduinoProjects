@@ -1,5 +1,6 @@
 //Two buttons and 2 LED
-//button1 toggle LED1 as default. When button 2 is pressed down, button 1 instead toggles LED2.
+//button1 will toggle LED1 as default. When button 2 is pressed down, button 1 instead toggles LED2.
+//I've only done debouncing for the first button
 
 //constants
 const byte buttonPinRed = 2;
@@ -11,11 +12,12 @@ const byte ledPinBlue = 9;
 const unsigned long debounceDelay = 50;
 
 //variables
-byte ledStateRed = LOW;   //For remembering the last state
-byte ledStateBlue = LOW;  //   -||-
-byte lastButtonState = LOW;
-byte buttonState = LOW;
-unsigned long lastDebounceTime = 0;
+byte ledStateRed = LOW;     //For remembering the last state of LED
+byte ledStateBlue = LOW;    //   -||-
+
+byte lastButtonState = LOW; //Variables for debouncing of the fisr button
+byte buttonState = LOW;     
+
 
 void setup() {
   pinMode(buttonPinRed, INPUT);
@@ -24,8 +26,11 @@ void setup() {
   pinMode(ledPinBlue, OUTPUT);
 }
 
+
 void loop() {
   byte reading = digitalRead(buttonPinRed);
+
+  unsigned long lastDebounceTime = 0;
 
   if (reading != lastButtonState)  //If red button state has changed
   {
@@ -38,9 +43,9 @@ void loop() {
       buttonState = reading;
 
       if (HIGH == buttonState) {
-        
+
         byte reading2 = digitalRead(buttonPinBlue);
-        
+
         if (reading2 == HIGH) {
           ledStateRed = !ledStateRed;
           digitalWrite(ledPinRed, ledStateRed);
